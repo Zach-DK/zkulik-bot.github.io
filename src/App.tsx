@@ -403,7 +403,7 @@ function App() {
             type="file"
             id="file-upload-input"
             multiple
-            accept=".htm,.html,.txt,text/plain"
+            accept=".txt,text/plain"
             onChange={(e) => handleFileUpload(e.target.files!)}
           />
           <label htmlFor="file-upload-input" className="load-docs-button">
