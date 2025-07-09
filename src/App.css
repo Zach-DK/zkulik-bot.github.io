@@ -151,6 +151,35 @@ body {
   transform: scale(1.2);
 }
 
+/* Speech box for walkthrough */
+.speech-box {
+  position: absolute;
+  background-color: #fffde7;
+  color: #333;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  z-index: 1000;
+  max-width: 300px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: top 0.5s ease, left 0.5s ease, opacity 0.5s ease;
+  opacity: 1;
+  /* Default position, will be overridden by inline styles */
+  top: -1000px; 
+}
+
+/* Arrow for the speech box */
+.speech-box::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -10px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: #fffde7 transparent transparent transparent;
+}
+
 /* Hide the actual file input */
 #file-upload-input {
   display: none;
@@ -270,6 +299,22 @@ body {
 }
 
 .mute-button:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.1);
+}
+
+.walkthrough-button {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 0.9em;
+  line-height: 1;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.walkthrough-button:hover {
   background-color: #f0f0f0;
   transform: scale(1.1);
 }

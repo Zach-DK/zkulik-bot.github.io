@@ -7,6 +7,18 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { type BaseRetriever } from "@langchain/core/retrievers";
 import './App.css';
 
+// Import audio files for the walkthrough
+import audio1 from './assets/audio/1.mp3';
+import audio2 from './assets/audio/2.mp3';
+import audio3 from './assets/audio/3.mp3';
+import audio4 from './assets/audio/4.mp3';
+import audio5 from './assets/audio/5.mp3';
+import audio6 from './assets/audio/6.mp3';
+import audio7 from './assets/audio/7.mp3';
+import audio8 from './assets/audio/8.mp3';
+import audio9 from './assets/audio/9.mp3';
+import audio10 from './assets/audio/10.mp3';
+
 // Define the structure of a message
 interface Message {
   role: 'user' | 'assistant' | 'system';
@@ -34,6 +46,22 @@ declare global {
   }
 }
 
+
+// Data for the walkthrough, mapping text to target element IDs and audio files
+const walkthroughData = [
+  { text: "For this project I wanted to spin up what is basically a quick chatgpt wrapper but with both text to speech and speech to text so that you can have a continuous conversation with the bot verbally on desktop.", targetId: "main-chat-area", audioSrc: audio1 },
+  { text: "I also added RAG by way of Langchain.", targetId: "rag-controls", audioSrc: audio2 },
+  { text: "I try to avoid overloading Cursor with features so I immediately started with a simple prompt to create a React page chatbot with the baseline MVP requirements outlined in the assignment.", targetId: "main-chat-area", audioSrc: audio3 },
+  { text: "I wanted to make sure I was building from the ground-up for deployment though, so I ensured that it would be able to launch on GitHub pages.", targetId: "main-chat-area", audioSrc: audio4 },
+  { text: "Next, I decided to align with Olivia's colours and add a dropdown for selecting different LLMs.", targetId: "app-header", audioSrc: audio5 },
+  { text: "I didn't want you to have to re-enter your api key every time so I make sure the user's browser keeps it in localstorage.", targetId: "api-key-input", audioSrc: audio6 },
+  { text: "I also copied the ChatGPT functionality to autogenerate a title for each chat when they are first messaged.", targetId: "chat-title-target", audioSrc: audio7 },
+  { text: "Next, I implemented text to speech for interacting with the bot verbally.", targetId: "tts-button", audioSrc: audio8 },
+  { text: "And finally, I added speech to text so the user can talk back.", targetId: "stt-button", audioSrc: audio9 },
+  { text: "That brings us to the end of the walkthrough. I hope you enjoy using the app and I hope to hear back from you soon!", targetId: "main-chat-area", audioSrc: audio10 }
+];
+
+
 function App() {
   // State variables
   const [apiKey, setApiKey] = useState<string>(() => localStorage.getItem('openai-api-key') || '');
@@ -54,6 +82,9 @@ function App() {
   const recognitionRef = useRef<any>(null); // To hold the SpeechRecognition instance
   const utteranceStartIndexRef = useRef(0); // To track the start of the current utterance
   const [isSpeechRecognitionSupported, setIsSpeechRecognitionSupported] = useState<boolean>(false);
+  const [isWalkthroughActive, setIsWalkthroughActive] = useState(false);
+  const [speechBox, setSpeechBox] = useState({ visible: false, text: '', top: 0, left: 0 });
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null); // To control the audio player
 
   // This effect runs once on component mount to initialize chats
   useEffect(() => {
@@ -377,16 +408,84 @@ function App() {
     if (e.key === 'Enter') handleSend();
   };
 
+  // This function starts the text-to-speech walkthrough
+  const startWalkthrough = () => {
+    if (isWalkthroughActive) {
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current.currentTime = 0;
+      }
+      setIsWalkthroughActive(false);
+      setSpeechBox(prev => ({ ...prev, visible: false }));
+      return;
+    }
+
+    setIsWalkthroughActive(true);
+    let currentIndex = 0;
+
+    // Ensure the audio player is created, and it's a new instance to avoid state issues.
+    audioPlayerRef.current = new Audio();
+    const audioPlayer = audioPlayerRef.current;
+
+    const playNext = () => {
+      if (currentIndex >= walkthroughData.length) {
+        setIsWalkthroughActive(false);
+        setSpeechBox(prev => ({ ...prev, visible: false }));
+        return;
+      }
+
+      const step = walkthroughData[currentIndex];
+      const targetElement = document.getElementById(step.targetId);
+
+      // Default position if element not found
+      let top = 150;
+      let left = window.innerWidth / 2 - 150;
+
+      if (targetElement) {
+        const rect = targetElement.getBoundingClientRect();
+        top = rect.top - 120; // Position above the element
+        left = rect.left + (rect.width / 2) - 150; // Center above the element
+
+        // Clamp to viewport
+        top = Math.max(10, top);
+        left = Math.min(left, window.innerWidth - 320);
+      }
+      
+      setSpeechBox({ visible: true, text: step.text, top, left });
+      
+      audioPlayer.src = step.audioSrc;
+      audioPlayer.play();
+
+      audioPlayer.onended = () => {
+        currentIndex++;
+        playNext();
+      };
+      audioPlayer.onerror = () => {
+        console.error("Audio playback Error");
+        setIsWalkthroughActive(false);
+        setSpeechBox(prev => ({ ...prev, visible: false }));
+      };
+    };
+
+    playNext();
+  };
+
   return (
     <div className="App">
+      {speechBox.visible && (
+        <div className="speech-box" style={{ top: speechBox.top, left: speechBox.left }}>
+          {speechBox.text}
+        </div>
+      )}
       <div className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
         <button className="new-chat-button" onClick={handleNewChat}>
           + New Chat
         </button>
         <ul className="chat-history-list">
-          {chats.map(chat => (
+          {chats.map((chat, index) => (
             <li
               key={chat.id}
+              id={index === 0 ? 'chat-title-target' : undefined}
               className={`chat-history-item ${chat.id === activeChatId ? 'active' : ''}`}
               onClick={() => setActiveChatId(chat.id)}
             >
@@ -398,7 +497,7 @@ function App() {
           ))}
         </ul>
 
-        <div className="rag-controls">
+        <div id="rag-controls" className="rag-controls">
           <input
             type="file"
             id="file-upload-input"
@@ -428,8 +527,8 @@ function App() {
         </div>
       </div>
 
-      <div className="main-chat-area">
-        <header className="App-header">
+      <div id="main-chat-area" className="main-chat-area">
+        <header id="app-header" className="App-header">
           <div className="header-left">
             <button className="sidebar-toggle-button" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}>
               {isSidebarCollapsed ? '›' : '‹'}
@@ -438,6 +537,7 @@ function App() {
           </div>
           <div className="controls-container">
             <input
+              id="api-key-input"
               type="password"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
@@ -450,8 +550,11 @@ function App() {
               <option value="o4-mini">o4-mini</option>
             </select>
             {/* Mute button for speech synthesis */}
-            <button className="mute-button" onClick={() => setIsMuted(!isMuted)}>
+            <button id="tts-button" className="mute-button" onClick={() => setIsMuted(!isMuted)}>
               {isMuted ? '🔇' : '🔊'}
+            </button>
+            <button className="walkthrough-button" onClick={startWalkthrough}>
+              {isWalkthroughActive ? '■ Stop' : '▶ Walkthrough'}
             </button>
           </div>
         </header>
@@ -484,6 +587,7 @@ function App() {
           {/* Microphone button for speech recognition */}
           {isSpeechRecognitionSupported && (
             <button
+              id="stt-button"
               className={`mic-button ${isListening ? 'listening' : ''}`}
               onClick={toggleListen}
             >
