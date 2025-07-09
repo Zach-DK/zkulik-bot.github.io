@@ -1,38 +1,386 @@
+/* General App styling */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f4f4f4; /* Light gray background */
+  color: #333; /* Darker text for readability */
+  margin: 0;
+  padding: 0;
+}
+
 .App {
+  display: flex;
+  height: 100vh;
+}
+
+/* Sidebar for chat history */
+.sidebar {
+  width: 260px;
+  min-width: 260px; /* Ensure it doesn't shrink with content */
+  background-color: #5a644e; /* Dark olive green from logo */
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  transition: min-width 0.3s ease, padding 0.3s ease, width 0.3s ease; /* Smooth transition */
+  overflow: hidden; /* Hide content when collapsing */
+}
+
+.sidebar.collapsed {
+  min-width: 0;
+  width: 0;
+  padding: 0 0;
+}
+
+.new-chat-button {
+  padding: 12px;
+  background-color: #c89e4a; /* Golden yellow from logo */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  margin-bottom: 20px;
+}
+
+.new-chat-button:hover {
+  background-color: #b38e44;
+}
+
+.chat-history-list {
+  flex-grow: 1;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+}
+
+/* Document loader styling */
+.rag-controls {
+  margin-top: auto; /* Pushes it to the bottom */
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center; /* Center align the content */
+}
+
+.load-docs-button {
+  display: block; /* Allow the label to have a width */
+  box-sizing: border-box; /* Include padding in the width calculation */
+  width: 100%;
+  padding: 12px;
+  background-color: #a8a28f; /* Lighter tan/green from logo */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.load-docs-button:hover {
+  background-color: #9a9382;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.rag-status {
+  margin-top: 10px;
+  font-size: 0.9em;
+  font-style: italic;
+  text-align: center;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Scrollable list for loaded document names */
+.document-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+  max-height: 120px; /* Set a max height for the list */
+  overflow-y: auto;  /* Make it scrollable */
+  font-size: 0.8em;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  text-align: left;
+}
+
+.document-list-item {
+  padding: 5px 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative; /* Required for the delete button */
+  padding-right: 30px; /* Make space for the delete button */
+}
+
+.document-list-item:last-child {
+  border-bottom: none;
+}
+
+/* Delete button for individual documents */
+.remove-doc-button {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.1em;
+  line-height: 1;
+  display: none; /* Hide by default */
+}
+
+.document-list-item:hover .remove-doc-button {
+  display: block; /* Show on hover */
+}
+
+/* Hide the actual file input */
+#file-upload-input {
+  display: none;
+}
+
+.chat-history-item {
+  position: relative;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.1);
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflowing text */
+  text-overflow: ellipsis; /* Add an ellipsis to truncated text */
+}
+
+.chat-history-item.active {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.chat-history-item:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.delete-chat-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.2em;
+  display: none; /* Hidden by default */
+}
+
+.chat-history-item:hover .delete-chat-button {
+  display: block; /* Show on hover */
+}
+
+
+/* Main chat area */
+.main-chat-area {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
+}
+
+
+/* Header styling */
+.App-header {
+  background-color: #ffffff;
+  padding: 10px 20px;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.sidebar-toggle-button {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 1.2em;
+  line-height: 1;
+}
+
+.sidebar-toggle-button:hover {
+  background-color: #f0f0f0;
+}
+
+.App-header h1 {
+  margin: 0;
+  font-size: 1.5em;
+  color: #5a644e;
+}
+
+/* Container for API key and model selector */
+.controls-container {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Space between controls */
+}
+
+/* Mute button for text-to-speech */
+.mute-button {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 1.2em;
+  line-height: 1;
+}
+
+.mute-button:hover {
+  background-color: #f0f0f0;
+}
+
+/* API Key input field and Model select styling */
+.controls-container input,
+.controls-container select {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+}
+
+.controls-container input {
+  width: 300px;
+}
+
+.controls-container select {
+  width: 150px;
+}
+
+
+/* Chat window styling */
+.chat-window {
+  position: relative; /* Required for the pseudo-element watermark */
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #ffffff; /* White chat background */
+}
+
+.chat-window::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('assets/logo-watermark.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.1;
+  z-index: 0;
+}
+
+/* Listening popup indicator */
+.listening-popup {
+  padding: 10px;
+  background-color: #fffde7; /* A light yellow */
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  color: #616161; /* A dark grey */
+  text-align: center;
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+/* Message styling */
+.message {
+  position: relative; /* To ensure it appears above the watermark */
+  z-index: 1; /* To ensure it appears above the watermark */
+  padding: 10px 15px;
+  border-radius: 15px;
+  max-width: 70%;
+  word-wrap: break-word;
+  color: #333; /* Dark text for messages */
+}
+
+/* User message styling */
+.message.user {
+  background-color: #c89e4a; /* Golden yellow from logo */
   color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 3px;
 }
 
-.App-link {
-  color: #61dafb;
+/* Assistant message styling */
+.message.assistant {
+  background-color: #e0e0e0; /* Light grey for assistant messages */
+  color: #333;
+  align-self: flex-start;
+  border-bottom-left-radius: 3px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.message p {
+  margin: 0;
+}
+
+/* Input container styling */
+.input-container {
+  display: flex;
+  padding: 20px;
+  border-top: 1px solid #ddd;
+  background-color: #f4f4f4; /* Match body background */
+}
+
+/* Microphone button for speech-to-text */
+.mic-button {
+  padding: 10px 12px;
+  margin-right: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 1.2em;
+  line-height: 1;
+}
+
+.mic-button.listening {
+  background-color: #ffdddd; /* Light red to indicate listening */
+  border-color: #ff9999;
+}
+
+.input-container input {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+  margin-right: 10px;
+}
+
+.input-container button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #5a644e; /* Dark olive green from logo */
+  color: white;
+  cursor: pointer;
+}
+
+.input-container button:disabled {
+  background-color: #a8a28f; /* Lighter tan/green from logo */
+  cursor: not-allowed;
 }
