@@ -434,7 +434,7 @@ function App() {
             <button className="sidebar-toggle-button" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}>
               {isSidebarCollapsed ? '›' : '‹'}
             </button>
-            <h1>Chatbot Example</h1>
+            <h1>Olivia Chatbot, Created by Zachary Kulik</h1>
           </div>
           <div className="controls-container">
             <input
