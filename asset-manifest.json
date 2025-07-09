@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/zkulik-bot.github.io/static/css/main.f43ed98f.css",
-    "main.js": "/zkulik-bot.github.io/static/js/main.b54b01e0.js",
+    "main.js": "/zkulik-bot.github.io/static/js/main.4b176e3d.js",
     "static/js/453.702826e2.chunk.js": "/zkulik-bot.github.io/static/js/453.702826e2.chunk.js",
     "static/media/logo-watermark.png": "/zkulik-bot.github.io/static/media/logo-watermark.641916267834fbc7fc98.png",
     "index.html": "/zkulik-bot.github.io/index.html",
     "main.f43ed98f.css.map": "/zkulik-bot.github.io/static/css/main.f43ed98f.css.map",
-    "main.b54b01e0.js.map": "/zkulik-bot.github.io/static/js/main.b54b01e0.js.map",
+    "main.4b176e3d.js.map": "/zkulik-bot.github.io/static/js/main.4b176e3d.js.map",
     "453.702826e2.chunk.js.map": "/zkulik-bot.github.io/static/js/453.702826e2.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f43ed98f.css",
-    "static/js/main.b54b01e0.js"
+    "static/js/main.4b176e3d.js"
   ]
 }
